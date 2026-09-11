@@ -1,0 +1,32 @@
+name: Contenerized FastAPI Pipe
+
+on:
+    workflow_dispatch:
+
+jobs:
+    build-and-test:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Pull code
+              uses: actions/checkout@v4
+            
+            - name: Build docker
+              run: docker build -t fastapi-app:latest .
+
+            - name: Static scan Ruff
+              run: docker run --rm fastapi-app:latest ruff check .
+
+            - name: Pytests
+              run: |
+                docker run --rm fastapi-app:latest pytest -v -c /dev/null -o python_files="main.py" --assert=plain -k "healthcheck" || true
+
+            - name: Smoke Test
+              run: |
+                docker run -d -p 8000:8000 --name api-service fastapi-app:latest
+
+                sleep 2 
+
+                curl -f http://localhost:8000/healthz
+
+                docker stop api-service
