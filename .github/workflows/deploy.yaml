@@ -23,7 +23,9 @@ jobs:
                k3d cluster create ml-cluster
               
             - name: Image Pull
-              run: k3d image import ml-api:local -c ml-cluster
+              run: |
+                docker save ml-api:local -o ml-api.tar
+                k3d image import ml-api:tar -c ml-cluster
             
             - name: Manifest
               run: |
