@@ -1,0 +1,36 @@
+name: Full Pipeline
+
+on:
+    workflow_dispatch:
+env:
+    REGISTRY: ghcr.io
+    IMAGE_NAME: ${{github.repository}}
+
+jobs:
+    test-job:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Docker tests
+              run: |
+                docker build -t app-test:latest .
+                docker run -rm app-test:latest pytest -v 
+    pulish-job:
+        needs: test-job
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Login
+              uses: docker/login-action@v3
+              with:
+                registry: ${{env.REGISTRY}}
+                username: ${{github.actor}}
+                password: ${{secrets.GITHUB_TOKEN}}
+            - name: Docker Push
+              run: |
+                    docker build -t ${{env.REGISTRY}}/${{env.IMAGE_NAME}}:latest . 
+                    docker push ${{env.REGISTRY}}/${{env.IMAGE_NAME}}:latest
