@@ -1,0 +1,16 @@
+name: GH Actions Demo
+run-name: ${{ github.actor}} is testing GH Actions
+on: [push]
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Job automatically triggered by ${{github.event_name}}"
+      - run: echo "This job is now running on ${{runner.os}}"
+      - run: echo "The name of the branch is ${{github.ref}}"
+      - name: Checkout
+        uses: actions/checkout@v6
+      - run: echo "The ${{github.repository}} has been cloned to the runner"
+      - name: List files
+        run: |
+          ls ${{github.workspace}}
