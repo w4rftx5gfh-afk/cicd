@@ -14,7 +14,15 @@ jobs:
         steps:
             - name: Code pull
               uses: actions/checkout@v4
-            
+
+            - name: Requirements
+              run: |
+                cat << 'EOF' > requirements.txt
+                ruff
+                fastapi
+                pytest
+                EOF
+
             - name: Prepare Python
               uses: actions/setup-python@v5
               with:
