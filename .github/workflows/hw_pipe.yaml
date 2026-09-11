@@ -1,0 +1,12 @@
+name: Hello World Pipeline
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  say-hello:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Hello from console
+          run: echo "Witaj świecie z GH Actions"
