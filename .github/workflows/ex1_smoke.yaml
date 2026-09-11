@@ -1,0 +1,27 @@
+name: SmokeTestPipe
+
+on:
+    workflow_dispatch:
+
+jobs:
+    smoke-test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Docker Build
+              run: docker build -t fastapi-smoke:latest . 
+
+            - name: Run container
+              run: docker run -d -p 8000:8000 --name test-app fastapi-smoke:latest 
+
+            - name: Call service
+              run: |
+                sleep 2
+                curl -f http://localhost:8000/healthz
+
+            - name: Cleanup
+              if: always()
+              run: |
+                docker stop test-app || true
+                docker rm test-app || true
