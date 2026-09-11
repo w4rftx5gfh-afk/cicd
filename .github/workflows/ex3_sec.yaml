@@ -1,0 +1,21 @@
+name: AquaSecScan
+
+on:
+    workflow_dispatch:
+
+jobs:
+    scan-image:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Docker Build
+              run: docker build -t fastapi-sec:latest .
+
+            - name: Security Scanning
+              uses: aquasecurity/trivy-action@master
+              with:
+                image-ref: 'fastapi-sec:latest'
+                format: 'table'
+                exit-code: '1'
+                severity: 'CRITICAL, HIGH'
