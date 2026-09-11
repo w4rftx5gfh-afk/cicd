@@ -12,9 +12,6 @@ jobs:
             - name: Pull
               uses: actions/checkout@v4
 
-            - name: Build
-              run: docker build -t ml-api:local .
-
             - name: K3S
               run: |
                wget -qO- https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
@@ -24,8 +21,8 @@ jobs:
               
             - name: Image Pull
               run: |
-                docker save ml-api:local -o ml-api.tar
-                k3d image import ml-api:tar -c ml-cluster
+                docker build -t ml-api:local .
+                k3d image tage ml-api:local ml-api:local -c ml-cluster || k3d image import ml-api:local -c ml-cluster
             
             - name: Manifest
               run: |
