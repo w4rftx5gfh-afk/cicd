@@ -16,10 +16,12 @@ jobs:
               run: docker build -t ml-api:latests .
 
             - name: K3S
-              uses: AbsaOSS/k3d-action@v2
-              with:
-                cluster-name: "demo-cluster"
-                args: --agents 1
+              run: |
+               wget -qO- https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+          
+          
+               k3d cluster create ml-cluster
+              
             - name: Image Pull
               run: |
                 docker save ml-api:local | sudo k3s ctr image import -
