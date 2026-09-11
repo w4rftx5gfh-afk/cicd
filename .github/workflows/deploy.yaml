@@ -16,10 +16,10 @@ jobs:
               run: docker build -t ml-api:latests .
 
             - name: K3S
-              uses: k3s-io/k3s-action@v0.1.0
+              uses: AbsaOSS/k3d-action@v2
               with:
-                args: server --disable-traefik
-
+                cluster-name: "demo-cluster"
+                args: --agents 1
             - name: Image Pull
               run: |
                 docker save ml-api:local | sudo k3s ctr image import -
