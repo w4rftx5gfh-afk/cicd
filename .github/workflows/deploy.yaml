@@ -26,8 +26,8 @@ jobs:
             
             - name: Manifest
               run: |
-               sed -i 's|image: .*|image: ml-api:local|g' deployment.yaml
-               kubectl apply -f deployment.yaml
+               sed -i 's|image: .*|image: ml-api:local|g' manifest.yaml
+               kubectl apply -f manifest.yaml
 
             - name: Check k8s
               run: |
