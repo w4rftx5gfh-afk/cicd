@@ -16,9 +16,9 @@ jobs:
               run: docker build -t ml-api:latests .
 
             - name: K3S
-              uses: debian-pi/k3s-action@v1
+              uses: k3s-io/k3s-action@v0.1.0
               with:
-                version: v1.28.2+k3s1
+                args: server --disable-traefik
 
             - name: Image Pull
               run: |
