@@ -1,0 +1,46 @@
+name: Deployment
+
+on:
+    workflow_dispach:
+
+
+jobs:
+    deployment:
+        runs-on: ubuntu-latest
+
+        steps: 
+            - name: Pull
+              uses: actions/checkout@v4
+
+            - name: Build
+              run: docker build -t ml-api:latests .
+
+            - name: K3S
+              uses: debian-pi/k3s-action@v1
+              with:
+                version: v1.28.2+k3s1
+
+            - name: Image Pull
+              run: |
+                docker save ml-api:local | sudo k3s ctr image import -
+            
+            - name: Manifest
+              run: |
+               sed -i 's|image: .*|image: ml-api:local|g' deployment.yaml
+               kubectl apply -f deployment.yaml
+
+            - name: Check k8s
+              run: |
+               kubectl rollout status deployment/ml-api-deployment --timeout=90s
+               kubectl get pods -o wide
+               kubectl get svc
+            - name: Test
+              run: |
+               kubectl port-forward svc/ml-api-service 8000:8000 &
+               sleep 3
+
+               curl -f http://localhost:8000/healthz
+
+               curl -f -X POST http://localhost:8000/predict \
+                -H "Content-Type: application/json" \
+                -d '{"feature_1":2.5, "feature_2" : 3.0}'
