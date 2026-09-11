@@ -7,7 +7,7 @@ jobs:
     unit_tests:
         runs-on: ubuntu-latest
         steps:
-            - uses: action/checkout@v4
+            - uses: actions/checkout@v4
 
             - name: Docker Build
               run: docker build -t fastapi-test:latest .
